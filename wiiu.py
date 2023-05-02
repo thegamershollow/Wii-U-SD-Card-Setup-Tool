@@ -1,4 +1,4 @@
-import bs4, colorama, os, pathlib, sys, urllib.request, urllib.error, io, requests, shutil, json, numpy as np
+import bs4, colorama, os, pathlib, sys, urllib.request, io, requests, shutil, json, numpy as np, pandas as pd
 from bs4 import BeautifulSoup; from colorama import Fore; from zipfile import ZipFile; from collections import namedtuple
 
 hbaRepo = 'https://wiiu.cdn.fortheusers.org/repo.json'
@@ -98,18 +98,31 @@ if prompt == '1':
 if prompt == '2':
     os.system('clear')
     repo = requests.get(hbaRepo)
-jsonSrc = repo.text
-def jsonDecoder(jsonDict):
-    return namedtuple('X', jsonDict.keys())(*jsonDict.values())
-pkg = json.loads(jsonSrc, object_hook=jsonDecoder)
-count = 0
-allPkg = []
-for items in pkg.packages.__iter__():
-    #allPkg.add(pkg.packages[count])
-    #pkg.packages[count]
-    allPkg.append(pkg.packages[count])
-    count = count+1
-print(allPkg)
+    jsonSrc = repo.text
+    def jsonDecoder(jsonDict):
+        return namedtuple('package', jsonDict.keys())(*jsonDict.values())
+    pkg = json.loads(jsonSrc, object_hook=jsonDecoder)
+    count = 0
+    pkgTotal = pkg.packages.__len__()
+    # create an empty list
+    allPkg = []
+    # iterate through items in json file
+    for items in pkg.packages.__iter__():
+        allPkg.append(pkg.packages[count])
+        count = count+1
+    # sorts the list alphabetically
+    allPkg = sorted(allPkg)
+    # converts list into a printable table
+    table = pd.DataFrame(allPkg)
+    table.drop(columns=["binary", "license", "url", "changelog", "screens", "extracted", "details", "md5", "description"],inplace=True,)
+    table = table.reindex(columns=["name","title", "author", "category", "version", "filesize"])
+    table.rename(columns={"category": "Category", "title": "App Title", "version" : "Version", "filesize" : "Download Size(KB)", "app_dls" : "App Downloads", "author" : "Author", "updated" : "Update Date","name" : "App Name"},inplace=True,)
+    print(table.to_string())
+    #hbSelect = input('Type the app/s name/title to download it **if multiple are selected this process will take a lot longer**\n\nSeperate the app name/s with commas if you want to download multiple apps at once.\n\nSelection: ')
+    titleLoc = table.loc[:,'App Title']
+    nameLoc = table.loc[:, 'App Name']
+    print(titleLoc.to_string)
+    print(nameLoc.to_string)
 
 #*Download/Update VWii Homebrew Apps
 if prompt == '3':
