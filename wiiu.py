@@ -114,15 +114,22 @@ if prompt == '2':
     allPkg = sorted(allPkg)
     # converts list into a printable table
     table = pd.DataFrame(allPkg)
-    table.drop(columns=["binary", "license", "url", "changelog", "screens", "extracted", "details", "md5", "description"],inplace=True,)
-    table = table.reindex(columns=["name","title", "author", "category", "version", "filesize"])
-    table.rename(columns={"category": "Category", "title": "App Title", "version" : "Version", "filesize" : "Download Size(KB)", "app_dls" : "App Downloads", "author" : "Author", "updated" : "Update Date","name" : "App Name"},inplace=True,)
+    table.drop(columns=["binary", "title", "license", "url", "changelog", "screens", "extracted", "details", "md5", "description"],inplace=True,)
+    table = table.reindex(columns=["name", "author", "category", "version", "filesize"])
+    table.rename(columns={"category": "Category", "version" : "Version", "filesize" : "Download Size(KB)", "app_dls" : "App Downloads", "author" : "Author", "updated" : "Update Date","name" : "App Name"},inplace=True,)
     print(table.to_string())
-    #hbSelect = input('Type the app/s name/title to download it **if multiple are selected this process will take a lot longer**\n\nSeperate the app name/s with commas if you want to download multiple apps at once.\n\nSelection: ')
-    titleLoc = table.loc[:,'App Title']
-    nameLoc = table.loc[:, 'App Name']
-    print(titleLoc.to_string)
-    print(nameLoc.to_string)
+    # asks for input of what app/s you want to download
+    hbSelect = input('Type the app/s name/ to download it '+Fore.LIGHTCYAN_EX+'**if multiple are selected this process will take a lot longer**'+Fore.RESET+'\n\nSeperate the app names with commas if you want to download multiple apps at once.\n\nSelection: '); hbSelect = hbSelect.split(',')
+    apps = table['App Name'].values.tolist()
+    for item in hbSelect:
+        if item in apps:
+            os.chdir(cache)
+            dlURL = hbaCDN+item+'.zip'
+            dl = download(dlURL,item+'.zip')
+            dl = ZipFile(item+'.zip')
+            dl.extractall()
+            dl.close
+            shutil.copytree('wiiu',sd+'/wiiu/',dirs_exist_ok=True)
 
 #*Download/Update VWii Homebrew Apps
 if prompt == '3':
