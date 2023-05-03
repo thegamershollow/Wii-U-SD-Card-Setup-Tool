@@ -42,13 +42,13 @@ def jsonDecoder(jsonDict):
 # base homebrew check function
 def nohb():
     noWIIU = os.path.isdir(sd+'/wiiu')
-    if noWIIU() != True:
+    if noWIIU != True:
         print(Fore.RED+'please download the base homebrew apps before downloading anything else')
         sys.exit(5)
 #*main function
 sdPath = ''
 sdVerify = os.path.isfile('.sdpath')
-if sdVerify() != True:
+if sdVerify != True:
     giveSdPath = input('Please specify the path of your '+Fore.CYAN+'Wii U'+Fore.RESET+' SD Card: ')
     f = open('.sdpath','w')
     giveSdPath = giveSdPath.replace("'","")
@@ -59,7 +59,7 @@ f = open('.sdpath','r')
 sd = f.read()
 f.close
 sdPath = os.path.isdir(sd)
-if sdPath() != True:
+if sdPath != True:
     print(Fore.RED+'Please reinsert the SD Card and try again')
     sys.exit(1)
 
@@ -136,10 +136,10 @@ if prompt == '2':
             dl.close
             print('Copied '+Fore.CYAN+item+Fore.RESET+' to the SD card\n')
             dlPath = os.path.isdir(sd+'/wiiu/apps/appstore/.get/packages/'+item)
-            if dlPath() != False:
+            if dlPath != False:
                 os.remove(sd+'/manifest.install')
                 os.remove(sd+'/info.json')
-            if dlPath() != True:
+            if dlPath != True:
                 os.mkdir(sd+'/wiiu/apps/appstore/.get/packages/'+item)
                 shutil.move(sd+'/manifest.install',sd+'/wiiu/apps/appstore/.get/packages/'+item)
                 shutil.move(sd+'/info.json',sd+'/wiiu/apps/appstore/.get/packages/'+item)
@@ -183,7 +183,7 @@ if prompt == '4':
     oscSelect = input('Type the app/s name/ to download it '+Fore.LIGHTCYAN_EX+'**if multiple are selected this process will take a lot longer**'+Fore.RESET+'\n\nSeperate the app names with commas if you want to download multiple apps at once.\n\nSelection: '); oscSelect = oscSelect.split(',')
     os.chdir(sd)
     oscPath = os.path.isdir(sd+'/apps')
-    if oscPath() != True:
+    if oscPath != True:
         os.mkdir(sd+'/apps')
     for item in oscSelect:
         if item in apps:
