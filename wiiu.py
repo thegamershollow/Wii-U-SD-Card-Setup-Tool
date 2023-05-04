@@ -1,4 +1,4 @@
-import os, sys, requests, shutil, json, pandas as pd
+import os, sys, requests, shutil, json, pandas as pd, io
 from colorama import Fore; from zipfile import ZipFile; from collections import namedtuple;
 
 hbaRepo = 'https://wiiu.cdn.fortheusers.org/repo.json'
@@ -29,8 +29,8 @@ def download(url: str, fileName: str):
             size += len(buffer)
             if length:
                 percent = int((size / length) * 100)
-                print(Fore.RESET+"Downloading"+f[fileName]+':'+Fore.CYAN+f"{percent}%", end='\r')
-    print(Fore.GREEN+"\nDone Downloading:"+Fore.CYAN+f"{fileName}"+Fore.RESET)
+                print(Fore.RESET+"Downloading "+Fore.BLUE+f"{fileName}"+': '+Fore.CYAN+f"{percent}%", end='\r')
+    print(Fore.GREEN+"\n\nDone Downloading: "+Fore.CYAN+f"{fileName}"+Fore.RESET)
 
 # json decoder function
 def jsonDecoder(jsonDict):
@@ -42,7 +42,9 @@ def nohb():
     if noWIIU != True:
         print(Fore.RED+'please download the base homebrew apps before downloading anything else')
         sys.exit(5)
+
 #*main function
+os.system('clear')
 sdPath = ''
 sdVerify = os.path.isfile('.sdpath')
 if sdVerify != True:
@@ -61,7 +63,7 @@ if sdPath != True:
     sys.exit(1)
 
 # prompt for the whole program
-prompt = input('What would you like to do?\nType the number of the corrasponding option that you want to select\n\n1. Download/Update base SD Card files\n2. Download/Update Wii U Homebrew Apps\n3. Download/Update files needed for vWii mod\n4. Download/Update Wii Homebrew\n5. Remove all files from Wii U SD Card\n6. Use a diffrent SD card\n7. Exit\n\nOption: ')
+prompt = input('\033[1;37mWii U SD Card Setup Tool\n\033[0;0mType the number of the corrasponding option that you want to select.\n\n\033[1;37m1. '+Fore.CYAN+'Download/Update'+Fore.RESET+' base SD Card files\n2. '+Fore.CYAN+'Download/Update'+Fore.RESET+' Wii U Homebrew Apps\n3. '+Fore.CYAN+'Download/Update'+Fore.RESET+' files needed for vWii mod\n4. '+Fore.CYAN+'Download/Update'+Fore.RESET+' Wii Homebrew\n5. '+Fore.BLUE+'Remove all files'+Fore.RESET+' from Wii U SD Card\n6. Use a diffrent SD card\n7. '+Fore.RED+'Exit'+Fore.RESET+'\n\n\033[0;0mOption: ')
 
 #*Download/Update Base Homebrew Files
 if prompt == '1':
@@ -148,8 +150,11 @@ if prompt == '3':
     nohb
     os.system('clear')
     os.chdir(sd)
-    vWii = download(vwiiDl,'vwii.zip')
-    os.remove(sd+'/vwii.zip')
+    vWii = download(vwiiDl,'vwii-setup.zip')
+    vWii = ZipFile('vwii-setup.zip','r')
+    vWii.extractall()
+    os.remove(sd+'/vwii-setup.zip')
+    print('\n'+Fore.GREEN+'Finished downloading the '+Fore.CYAN+'vWii mod files'+Fore.RESET+'\n')
 
 #*Download/Update VWii Homebrew Apps
 if prompt == '4':
