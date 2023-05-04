@@ -1,4 +1,4 @@
-import os, sys, urllib.request, io, requests, shutil, json, pandas as pd
+import os, sys, requests, shutil, json, pandas as pd
 from colorama import Fore; from zipfile import ZipFile; from collections import namedtuple;
 
 hbaRepo = 'https://wiiu.cdn.fortheusers.org/repo.json'
@@ -13,27 +13,24 @@ vwiiDl = 'https://github.com/thegamershollow/custom-tiramisu-environment/raw/mai
 
 # download function with status        
 def download(url: str, fileName: str):
-    with urllib.request.urlopen(url) as Response:
-        Length = Response.getheader('content-length')
-        BlockSize = 1000000  # default value
-        if Length:
-            Length = int(Length)
-            BlockSize = max(4096, Length // 20)
-        BufferAll = io.BytesIO()
-        Size = 0
-        while True:
-            BufferNow = Response.read(BlockSize)
-            if not BufferNow:
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    length = response.headers.get('content-length')
+    block_size = 1000000  # default value
+    if length:
+        length = int(length)
+        block_size = max(4096, length // 20)
+    with open(fileName, 'wb') as f:
+        size = 0
+        for buffer in response.iter_content(block_size):
+            if not buffer:
                 break
-            BufferAll.write(BufferNow)
-            Size += len(BufferNow)
-            if Length:
-                Percent = int((Size / Length)*100)
-                print(Fore.RESET+'Downloading '+Fore.BLUE+fileName+Fore.RESET+': '+Fore.CYAN+f"{Percent}%")
-                r = requests.get(url, fileName)
-        print(Fore.GREEN+'\nFinished Downloading: '+Fore.CYAN+ fileName+'\n'+Fore.RESET)
-        f = open(fileName,'wb')
-        f.write(r.content)
+            f.write(buffer)
+            size += len(buffer)
+            if length:
+                percent = int((size / length) * 100)
+                print(Fore.RESET+"Downloading"+f[fileName]+':'+Fore.CYAN+f"{percent}%", end='\r')
+    print(Fore.GREEN+"\nDone Downloading:"+Fore.CYAN+f"{fileName}"+Fore.RESET)
 
 # json decoder function
 def jsonDecoder(jsonDict):
