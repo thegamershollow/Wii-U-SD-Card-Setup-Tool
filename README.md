@@ -1,3 +1,3 @@
 # Wii-U-SD-Card-Preparer
 
-A Python based program that can be used to download and update Wii U Homebrew directly onto your SD card
+The WIKI for this can be found [HERE](https://github.com/thegamershollow/Wii-U-SD-Card-Setup-Tool/wiki)
