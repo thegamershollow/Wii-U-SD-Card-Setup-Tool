@@ -6,6 +6,7 @@ hbaCDN = 'https://wiiu.cdn.fortheusers.org/zips/'
 hbaDL = 'https://wiiu.cdn.fortheusers.org/zips/appstore.zip'
 aromaUpdater = 'https://github.com/thegamershollow/hbl-apps/releases/download/aromaUPD/AromaUpdater.wuhb'
 aromaPackages = 'https://aroma.foryour.cafe/api/download?packages=bloopair,wiiload,ftpiiu,sdcafiine,screenshotplugin,swipswapme,environmentloader,wiiu-nanddumper-payload'
+nuspliPKG = 'https://github.com/V10lator/NUSspli/releases/download/v1.131/NUSspli-1.131-Aroma.zip'
 aromaBase = 'https://github.com/wiiu-env/Aroma/releases/download/beta-14/aroma-beta-14.zip'
 oscURL = 'https://api.oscwii.org/v2/primary/packages'
 oscCDN = 'https://hbb1.oscwii.org/hbb/'
@@ -92,7 +93,13 @@ if prompt == '1':
     aroma.extractall()
     aroma.close
     os.remove(sd+'/aroma.zip')
-    # copies the downloaded files from the cache directory to the sd card
+    os.mkdir(sd+'/wiiu/apps/nuspli')
+    os.chdir(sd+'/wiiu/apps/nuspli')
+    nuspli = download(nuspliPKG, 'nuspliPKG.zip')
+    nuspli = ZipFile('nuspliPKG.zip')
+    nuspli.extractall()
+    nuspli.close
+    os.remove(sd+'wiiu/apps/nuspli/nuspliPKG.zip')
     print(Fore.GREEN+'Finished downloading the '+Fore.CYAN+'base SD Card Files.'+Fore.RESET+'\n')
 
 #*Download/Update Wii U Homebrew Apps
