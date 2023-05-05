@@ -21,6 +21,9 @@ def download(url: str, fileName: str):
     if length:
         length = int(length)
         block_size = max(4096, length // 20)
+    filesize = length*10**-6
+    filesize = round(filesize, 2)
+    print(Fore.BLUE+f"{fileName}"+Fore.RESET+' size: '+Fore.CYAN+f"{filesize} MB"+Fore.RESET)
     with open(fileName, 'wb') as f:
         size = 0
         for buffer in response.iter_content(block_size):
@@ -72,39 +75,47 @@ if prompt == '1':
     # changes directory to cache
     os.chdir(sd)
     # downloads the Homebrew appstore and extracts the zip file
-    hbl = download(hbaDL,'appstore.zip')
-    hbl = ZipFile('appstore.zip','r')
-    hbl.extractall()
-    hbl.close
+    if os.path.isdir(sd+'/wiiu/apps/appstore') != True:
+        hba = download(hbaDL,'appstore.zip')
+        hba = ZipFile('appstore.zip','r')
+        hba.extractall()
+        hba.close
     pkgs = os.path.isdir(sd+'/wiiu/apps/appstore/.get/packages')
     if pkgs != True:
         os.mkdir(sd+'/wiiu/apps/appstore/.get/packages')
     hba = os.path.isdir(sd+'/wiiu/apps/appstore/.get/packages/appstore')
     if hba != True:
         os.mkdir(sd+'/wiiu/apps/appstore/.get/packages/appstore')
-    shutil.move(sd+'/manifest.install',sd+'/wiiu/apps/appstore/.get/packages/appstore')
-    shutil.move(sd+'/info.json',sd+'/wiiu/apps/appstore/.get/packages/appstore')
+        shutil.move(sd+'/manifest.install',sd+'/wiiu/apps/appstore/.get/packages/appstore')
+        shutil.move(sd+'/info.json',sd+'/wiiu/apps/appstore/.get/packages/appstore')
     os.remove(sd+'/appstore.zip')
     # downloads the aroma packages and extracts the zip file
-    aPKG = download(aromaPackages, 'aromapkgs.zip')
-    aPKG = ZipFile('aromapkgs.zip','r')
-    aPKG.extractall()
-    aPKG.close
-    os.remove(sd+'/aromapkgs.zip')
+    if os.path.isdir(sd+'/wiiu/environments') != True:
+        aPKG = download(aromaPackages, 'aromapkgs.zip')
+        aPKG = ZipFile('aromapkgs.zip','r')
+        aPKG.extractall()
+        aPKG.close
+        os.remove(sd+'/aromapkgs.zip')
     # downloads the base files for aroma and extracts the zip file
-    aroma = download(aromaBase, 'aroma.zip')
-    aroma = ZipFile('aroma.zip','r')
-    aroma.extractall()
-    aroma.close
-    os.remove(sd+'/aroma.zip')
-    os.mkdir(sd+'/wiiu/apps/nuspli')
-    os.chdir(sd+'/wiiu/apps/nuspli')
-    nuspli = download(nuspliPKG, 'nuspliPKG.zip')
-    nuspli = ZipFile('nuspliPKG.zip')
-    nuspli.extractall()
-    nuspli.close
-    os.remove(sd+'/wiiu/apps/nuspli/nuspliPKG.zip')
-    print(Fore.GREEN+'\nFinished downloading the '+Fore.CYAN+'base SD Card Files.'+Fore.RESET+'\n')
+        aroma = download(aromaBase, 'aroma.zip')
+        aroma = ZipFile('aroma.zip','r')
+        aroma.extractall()
+        aroma.close
+        os.remove(sd+'/aroma.zip')
+    # downloads nuspli wuhb and extracts the zip file
+    if os.path.isdir(sd+'/wiiu/apps/nuspli') !=True:
+        os.mkdir(sd+'/wiiu/apps/nuspli')
+        os.chdir(sd+'/wiiu/apps/nuspli')
+        nuspli = download(nuspliPKG, 'nuspliPKG.zip')
+        nuspli = ZipFile('nuspliPKG.zip')
+        nuspli.extractall()
+        nuspli.close
+        os.remove(sd+'/wiiu/apps/nuspli/nuspliPKG.zip')
+    if os.path.isdir(sd+'/wiiu') != True:
+        print(Fore.GREEN+'\nFinished downloading the '+Fore.CYAN+'base SD Card Files.'+Fore.RESET+'\n')
+    else:
+        print(Fore.RED+'\nThe'+Fore.CYAN+'base SD Card Files'+Fore.RESET+' are already installed, please choose a diffrent option.\n')
+        sys.exit(1)
 
 #*Download/Update Wii U Homebrew Apps
 if prompt == '2':
@@ -139,33 +150,39 @@ if prompt == '2':
     # downloads the homebrew apps specified in hbSelect
     for item in hbSelect:
         if item in apps:
-            dlURL = hbaCDN+item+'.zip'
-            dl = download(dlURL,item+'.zip')
-            dl = ZipFile(item+'.zip')
-            dl.extractall()
-            dl.close
-            print('Copied '+Fore.CYAN+item+Fore.RESET+' to the SD card\n')
-            dlPath = os.path.isdir(sd+'/wiiu/apps/appstore/.get/packages/'+item)
-            if dlPath != False:
-                os.remove(sd+'/manifest.install')
-                os.remove(sd+'/info.json')
-            if dlPath != True:
-                os.mkdir(sd+'/wiiu/apps/appstore/.get/packages/'+item)
-                shutil.move(sd+'/manifest.install',sd+'/wiiu/apps/appstore/.get/packages/'+item)
-                shutil.move(sd+'/info.json',sd+'/wiiu/apps/appstore/.get/packages/'+item)
-            os.remove(sd+'/'+item+'.zip')
+            if os.path.isdir(sd+'/wiiu/apps/'+item) != True:
+                dlURL = hbaCDN+item+'.zip'
+                dl = download(dlURL,item+'.zip')
+                dl = ZipFile(item+'.zip')
+                dl.extractall()
+                dl.close
+                print('Copied '+Fore.CYAN+item+Fore.RESET+' to the SD card\n')
+                dlPath = os.path.isdir(sd+'/wiiu/apps/appstore/.get/packages/'+item)
+                if dlPath != False:
+                    os.remove(sd+'/manifest.install')
+                    os.remove(sd+'/info.json')
+                if dlPath != True:
+                    os.mkdir(sd+'/wiiu/apps/appstore/.get/packages/'+item)
+                    shutil.move(sd+'/manifest.install',sd+'/wiiu/apps/appstore/.get/packages/'+item)
+                    shutil.move(sd+'/info.json',sd+'/wiiu/apps/appstore/.get/packages/'+item)
+                os.remove(sd+'/'+item+'.zip')
+            else:
+                print(Fore.YELLOW+'SKIPPING '+item+' Because it is already installed on the SD Card!'+Fore.RESET)
     print('\n'+Fore.GREEN+'Finished downloading app/s')
 
 #*Download/Update vWii mod files
 if prompt == '3':
-    nohb
     os.system('clear')
-    os.chdir(sd)
-    vWii = download(vwiiDl,'vwii-setup.zip')
-    vWii = ZipFile('vwii-setup.zip','r')
-    vWii.extractall()
-    os.remove(sd+'/vwii-setup.zip')
-    print(Fore.GREEN+'Finished downloading the '+Fore.CYAN+'vWii mod files'+Fore.RESET)
+    nohb
+    if os.path.isdir(sd+'/wiiu/environments/vWii Menu Launcher') or os.path.isdir(sd+'/wiiu/environments/vWii Mod Installer') != True:
+        os.chdir(sd)
+        vWii = download(vwiiDl,'vwii-setup.zip')
+        vWii = ZipFile('vwii-setup.zip','r')
+        vWii.extractall()
+        os.remove(sd+'/vwii-setup.zip')
+        print(Fore.GREEN+'Finished downloading the '+Fore.CYAN+'vWii Mod Files'+Fore.RESET)
+    else:
+        print(Fore.RED+'\nThe'+Fore.CYAN+'vWii Mod Files'+Fore.RESET+' are already installed, please choose a diffrent option.\n')
 
 #*Download/Update VWii Homebrew Apps
 if prompt == '4':
@@ -200,14 +217,17 @@ if prompt == '4':
         os.mkdir(sd+'/apps')
     for item in oscSelect:
         if item in apps:
-            dlURL = oscCDN+item+'/'+item+'.zip'
-            dl = download(dlURL,item+'.zip')
-            dl = ZipFile(item+'.zip')
-            dl.extractall()
-            dl.close
-            print('Copied '+Fore.CYAN+item+Fore.RESET+' to the SD card\n')
-            #dlPath = os.path(sd+'/wiiu/apps/appstore/.get/packages/'+item)
-            os.remove(sd+'/'+item+'.zip')
+            if os.path.isdir(sd+'/apps/'+item) != True:
+                dlURL = oscCDN+item+'/'+item+'.zip'
+                dl = download(dlURL,item+'.zip')
+                dl = ZipFile(item+'.zip')
+                dl.extractall()
+                dl.close
+                print('Copied '+Fore.CYAN+item+Fore.RESET+' to the SD card\n')
+                #dlPath = os.path(sd+'/wiiu/apps/appstore/.get/packages/'+item)
+                os.remove(sd+'/'+item+'.zip')
+            else:
+                print(Fore.YELLOW+'SKIPPING '+item+' Because it is already installed on the SD Card!'+Fore.RESET)
     print('\n'+Fore.GREEN+'Finished downloading app/s')
     
 
@@ -215,7 +235,7 @@ if prompt == '4':
 if prompt == '5':
     os.system('clear')
     warn=input(Fore.RED+'*⚠️WARNING⚠️* '+Fore.RESET+'This will delete/remove all files from the SD card\nContinue (Y/N):\n')
-    if warn == 'Y' or warn == 'y':
+    if warn == 'Y' or warn == 'y' or warn == 'yes' or warn == 'Yes':
         shutil.rmtree(sd, ignore_errors=True)
         os.system('exit')
         sys.exit()
@@ -225,6 +245,7 @@ if prompt == '5':
 if prompt == '6':
     os.system('clear')
     os.remove('.sdpath')
+    print('Please restart the app for changes to take effect.')
 
 #*Exit program
 if prompt == '7':
