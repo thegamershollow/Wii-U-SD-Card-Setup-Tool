@@ -44,8 +44,7 @@ def jsonDecoder(jsonDict):
 def nohb():
     noWIIU = os.path.isdir(sd+'/wiiu')
     if noWIIU != True:
-        print(Fore.RED+'please download the base homebrew apps before downloading anything else')
-        sys.exit(5)
+        sys.exit(Fore.YELLOW+'ERROR'+Fore.RED+'\nPlease download the base homebrew apps before downloading anything else')
 
 #*main function
 os.system('clear')
@@ -53,18 +52,21 @@ sdPath = ''
 sdVerify = os.path.isfile('.sdpath')
 if sdVerify != True:
     giveSdPath = input('Please specify the path of your '+Fore.CYAN+'Wii U'+Fore.RESET+' SD Card: ')
-    f = open('.sdpath','w')
     giveSdPath = giveSdPath.replace("'","")
-    f.write(giveSdPath)
-    f.close
-    sdPath = giveSdPath
+    verify = os.path.isdir(giveSdPath)
+    if verify != False:
+        f = open('.sdpath','w')
+        f.write(giveSdPath)
+        f.close
+        sdPath = giveSdPath
+    else:
+        sys.exit(Fore.YELLOW+'The path you specified is not a valid SD Card/Folder, '+Fore.RED+'Exiting the program!')
 f = open('.sdpath','r')
 sd = f.read()
 f.close
 sdPath = os.path.isdir(sd)
 if sdPath != True:
-    print(Fore.RED+'Please reinsert the SD Card and try again')
-    sys.exit(1)
+    sys.exit(Fore.RED+'Please reinsert the SD Card and try again\n'+Fore.YELLOW+'If the problem persists please open an issue at https://github.com/thegamershollow/Wii-U-SD-Card-Setup-Tool/issues'+Fore.RESET)
 
 # prompt for the whole program
 prompt = input('\033[1;37mWii U SD Card Setup Tool\n\033[0;0mType the number of the corrasponding option that you want to select.\n\n\033[1;37m1. '+Fore.CYAN+'Download/Update'+Fore.RESET+' base SD Card files\n2. '+Fore.CYAN+'Download/Update'+Fore.RESET+' Wii U Homebrew Apps\n3. '+Fore.CYAN+'Download/Update'+Fore.RESET+' files needed for vWii mod\n4. '+Fore.CYAN+'Download/Update'+Fore.RESET+' Wii Homebrew\n5. '+Fore.BLUE+'Remove all files'+Fore.RESET+' from Wii U SD Card\n6. Use a diffrent SD card\n7. '+Fore.RED+'Exit'+Fore.RESET+'\n\n\033[0;0mOption: ')
