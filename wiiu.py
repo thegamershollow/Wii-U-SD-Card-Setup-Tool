@@ -113,7 +113,7 @@ if prompt == '1':
         nuspli.extractall()
         nuspli.close
         os.remove(sd+'/wiiu/apps/nuspli/nuspliPKG.zip')
-    if os.path.isdir(sd+'/wiiu') != True:
+    if os.path.isdir(sd+'/wiiu') != False:
         print(Fore.GREEN+'\nFinished downloading the '+Fore.CYAN+'base SD Card Files.'+Fore.RESET+'\n')
     else:
         print(Fore.RED+'\nThe'+Fore.CYAN+'base SD Card Files'+Fore.RESET+' are already installed, please choose a diffrent option.\n')
