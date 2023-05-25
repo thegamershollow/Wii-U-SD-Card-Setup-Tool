@@ -10,7 +10,9 @@ nuspliPKG = 'https://github.com/V10lator/NUSspli/releases/download/v1.131/NUSspl
 aromaBase = 'https://github.com/wiiu-env/Aroma/releases/download/beta-14/aroma-beta-14.zip'
 oscURL = 'https://api.oscwii.org/v2/primary/packages'
 oscCDN = 'https://hbb1.oscwii.org/hbb/'
-vwiiDl = 'https://github.com/thegamershollow/custom-tiramisu-environment/raw/main/custom-tiramisu-environment.zip'
+compaturl = 'https://github.com/thegamershollow/vwii-compat-installer/releases/download/v1.0/vwii-compat-installer.wuhb'
+d2x = 'https://hbb1.oscwii.org/hbb/d2x-cios-installer/d2x-cios-installer.zip'
+ios80 = 'https://hbb1.oscwii.org/hbb/Patched_IOS80_Installer_for_vWii/Patched_IOS80_Installer_for_vWii.zip'
 
 # download function with status        
 def download(url: str, fileName: str):
@@ -111,10 +113,10 @@ if prompt == '1':
         nuspli.extractall()
         nuspli.close
         os.remove(sd+'/wiiu/apps/nuspli/nuspliPKG.zip')
-    if os.path.isdir(sd+'/wiiu') != True:
+    if os.path.isdir(sd+'/wiiu') != False:
         print(Fore.GREEN+'\nFinished downloading the '+Fore.CYAN+'base SD Card Files.'+Fore.RESET+'\n')
     else:
-        print(Fore.RED+'\nThe'+Fore.CYAN+'base SD Card Files'+Fore.RESET+' are already installed, please choose a diffrent option.\n')
+        print(Fore.RED+'\nThe '+Fore.CYAN+'base SD Card Files'+Fore.RED+' are already installed, please choose a diffrent option.\n'+Fore.RESET)
         sys.exit(1)
 
 #*Download/Update Wii U Homebrew Apps
@@ -145,7 +147,7 @@ if prompt == '2':
     apps = pkgTable['App Name'].values.tolist()
     os.chdir(sd)
     pkgPath = os.path.isdir(sd+'/wiiu/apps/appstore/.get/packages')
-    if pkgPath() != True:
+    if pkgPath != True:
         os.mkdir(sd+'/wiiu/apps/appstore/.get/packages')
     # downloads the homebrew apps specified in hbSelect
     for item in hbSelect:
@@ -168,18 +170,25 @@ if prompt == '2':
                 os.remove(sd+'/'+item+'.zip')
             else:
                 print(Fore.YELLOW+'SKIPPING '+item+' Because it is already installed on the SD Card!'+Fore.RESET)
-    print('\n'+Fore.GREEN+'Finished downloading app/s')
+    print(Fore.GREEN+'Finished downloading app/s')
 
 #*Download/Update vWii mod files
 if prompt == '3':
     os.system('clear')
     nohb
-    if os.path.isdir(sd+'/wiiu/environments/vWii Menu Launcher') or os.path.isdir(sd+'/wiiu/environments/vWii Mod Installer') != True:
+    if os.path.isfile(sd+'/wiiu/apps/vwii-compat-installer.wuhb') != True:
         os.chdir(sd)
-        vWii = download(vwiiDl,'vwii-setup.zip')
-        vWii = ZipFile('vwii-setup.zip','r')
-        vWii.extractall()
-        os.remove(sd+'/vwii-setup.zip')
+        os.chdir(sd+'/wiiu/apps/')
+        compat = download(compaturl, 'vwii-compat-installer.wuhb')
+        os.chdir(sd)
+        d2xdl = download(d2x, 'd2x.zip')
+        d2xdl = ZipFile('d2x.zip')
+        d2xdl.extractall()
+        ios80dl = download(ios80, 'ios80.zip')
+        ios80dl = ZipFile('ios80.zip')
+        ios80dl.extractall()
+        os.remove(sd+'/ios80.zip')
+        os.remove(sd+'/d2x.zip')
         print(Fore.GREEN+'Finished downloading the '+Fore.CYAN+'vWii Mod Files'+Fore.RESET)
     else:
         print(Fore.RED+'\nThe'+Fore.CYAN+'vWii Mod Files'+Fore.RESET+' are already installed, please choose a diffrent option.\n')
